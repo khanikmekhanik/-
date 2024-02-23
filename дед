@@ -1,0 +1,49 @@
+import random
+
+def print_puzzle(puzzle):
+    for row in puzzle:
+        print(row)
+
+def find_blank(puzzle):
+    for i in range(4):
+        for j in range(4):
+            if puzzle[i][j] == 0:
+                return (i, j)
+
+def shuffle_puzzle(puzzle, moves=100):
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    for _ in range(moves):
+        i, j = find_blank(puzzle)
+        move = random.choice(directions)
+        new_i, new_j = i + move[0], j + move[1]
+        if 0 <= new_i < 4 and 0 <= new_j < 4:
+            puzzle[i][j], puzzle[new_i][new_j] = puzzle[new_i][new_j], puzzle[i][j]
+
+def is_solved(puzzle):
+    return all(puzzle[i][j] == i * 4 + j + 1 for i in range(4) for j in range(4))
+
+def play_game():
+    puzzle = [[i*4 + j + 1 for j in range(4)] for i in range(4)]
+    puzzle[3][3] = 0
+    shuffle_puzzle(puzzle)
+
+    while not is_solved(puzzle):
+        print_puzzle(puzzle)
+        move = input("Enter your move (WASD): ").upper()
+        
+        i, j = find_blank(puzzle)
+        if move == 'W' and i > 0:
+            puzzle[i][j], puzzle[i-1][j] = puzzle[i-1][j], puzzle[i][j]
+        elif move == 'A' and j > 0:
+            puzzle[i][j], puzzle[i][j-1] = puzzle[i][j-1], puzzle[i][j]
+        elif move == 'S' and i < 3:
+            puzzle[i][j], puzzle[i+1][j] = puzzle[i+1][j], puzzle[i][j]
+        elif move == 'D' and j < 3:
+            puzzle[i][j], puzzle[i][j+1] = puzzle[i][j+1], puzzle[i][j]
+        else:
+            print("Invalid move. Use WASD.")
+
+    print("Congratulations! You solved the puzzle!")
+
+if __name__ == "__main__":
+    play_game()
